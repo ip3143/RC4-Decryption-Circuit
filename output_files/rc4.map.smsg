@@ -1,2 +1,2 @@
-Info (10281): Verilog HDL Declaration information at task2bdecrypt.v(5): object "done" differs only in case from object "DONE" in the same scope File: C:/intelFPGA_lite/16.1/CPEN311Lab4/template_de1soc/task2bdecrypt.v Line: 5
-Warning (10268): Verilog HDL information at Task2a.v(44): always construct contains both blocking and non-blocking assignments File: C:/intelFPGA_lite/16.1/CPEN311Lab4/template_de1soc/Task2a.v Line: 44
+Warning (10268): Verilog HDL information at s_memory_shuffle.v(45): always construct contains both blocking and non-blocking assignments File: C:/Users/User/Downloads/CPEN311Lab4-main/RC4 Code Breaker/RC4 Code Breaker/s_memory_shuffle.v Line: 45
+Info (10281): Verilog HDL Declaration information at decrypter.v(5): object "done" differs only in case from object "DONE" in the same scope File: C:/Users/User/Downloads/CPEN311Lab4-main/RC4 Code Breaker/RC4 Code Breaker/decrypter.v Line: 5
