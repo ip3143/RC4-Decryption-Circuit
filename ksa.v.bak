@@ -1,0 +1,31 @@
+module ksa (
+    input  logic         CLOCK_50,         // Clock pin
+    input  logic [3:0]   KEY,              // Push button switches
+    input  logic [9:0]   SW,               // Slider switches
+    output logic [9:0]   LEDR,             // Red LEDs
+    output logic [6:0]   HEX0,
+    output logic [6:0]   HEX1,
+    output logic [6:0]   HEX2,
+    output logic [6:0]   HEX3,
+    output logic [6:0]   HEX4,
+    output logic [6:0]   HEX5
+);
+
+    // Clock and reset signals
+    logic clk;
+    logic reset_n;
+
+    assign clk = CLOCK_50;
+    assign reset_n = KEY[3];
+
+    // Seven Segment Decoder module interface (equivalent to VHDL component)
+    // You must define this module separately if it is not already provided.
+    /*
+    module SevenSegmentDisplayDecoder (
+        output logic [6:0] ssOut,
+        input  logic [3:0] nIn
+    );
+    endmodule
+    */
+
+endmodule

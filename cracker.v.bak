@@ -1,0 +1,10 @@
+module cracker
+(
+input logic clk,
+input logic start
+input logic key,
+output logic found,
+output logic not_found
+);
+
+endmodule

@@ -1,0 +1,116 @@
+module s_memory_shuffle (
+    input  logic         clk,
+    input  logic         rst_n,        // Active-low reset
+    input  logic         start,        // Signal to begin shuffling
+    input  logic [23:0]  secret_key,   // 3-byte key
+    input  logic [7:0]   q,            // Value read from memory
+    output logic [7:0]   addr,         // Address to write to memory
+    output logic [7:0]   data,         // Data to write to memory
+    output logic         wren,         // Write enable signal
+    output logic         done          // Shuffling complete
+);
+
+    // State encoding (one-hot)
+    typedef enum logic [9:0] {
+        IDLE         = 10'b0000000001,
+        READ_SI      = 10'b0000000010,
+        WAIT_SI      = 10'b0000000100,
+        COMPUTE_J    = 10'b0000001000,
+        READ_SJ      = 10'b0000010000,
+        WAIT_SJ      = 10'b0000100000,
+        WRITE_SI     = 10'b0001000000,
+        WRITE_SJ     = 10'b0010000000,
+        INCREMENT_I  = 10'b0100000000,
+        FINISHED     = 10'b1000000000
+    } state_t;
+
+    state_t state = IDLE;
+
+    // Internal registers
+    logic [7:0] i, j, si, sj;
+    logic [7:0] secret_key_mod_result;
+    logic       address_select, data_select;
+
+    // Output logic
+    assign addr = address_select ? j : i;
+    assign data = data_select ? sj : si;
+    assign wren = (state == WRITE_SI) || (state == WRITE_SJ);
+    assign done = (state == FINISHED);
+
+    // Address and data selection logic
+    assign address_select = (state == READ_SJ || state == WAIT_SJ || state == WRITE_SJ);
+    assign data_select    = (state == WRITE_SI);
+
+    // Secret key selection based on i % 3
+    assign secret_key_mod_result = (i % 3 == 0) ? secret_key[23:16] :
+                                   (i % 3 == 1) ? secret_key[15:8]  :
+                                                  secret_key[7:0];
+
+    // FSM logic
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            i     <= 8'd0;
+            j     <= 8'd0;
+            si    <= 8'd0;
+            sj    <= 8'd0;
+            state <= IDLE;
+        end else begin
+            case (state)
+                IDLE: begin
+                    if (start) begin
+                        i     <= 8'd0;
+                        j     <= 8'd0;
+                        state <= READ_SI;
+                    end
+                end
+
+                READ_SI: begin
+                    state <= WAIT_SI;
+                end
+
+                WAIT_SI: begin
+                    si    <= q;
+                    state <= COMPUTE_J;
+                end
+
+                COMPUTE_J: begin
+                    j     <= j + si + secret_key_mod_result;
+                    state <= READ_SJ;
+                end
+
+                READ_SJ: begin
+                    state <= WAIT_SJ;
+                end
+
+                WAIT_SJ: begin
+                    sj    <= q;
+                    state <= WRITE_SI;
+                end
+
+                WRITE_SI: begin
+                    state <= WRITE_SJ;
+                end
+
+                WRITE_SJ: begin
+                    state <= INCREMENT_I;
+                end
+
+                INCREMENT_I: begin
+                    if (i == 8'hFF)
+                        state <= FINISHED;
+                    else begin
+                        i <= i + 1;
+                        state <= READ_SI;
+                    end
+                end
+
+                FINISHED: begin
+                    state <= IDLE;
+                end
+
+                default: state <= IDLE;
+            endcase
+        end
+    end
+
+endmodule
