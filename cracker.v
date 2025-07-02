@@ -11,17 +11,20 @@ output logic not_found,
 output logic initialize
 );
 //State encoding
-parameter   INIT      =4'b0001,
-            WAIT1     =4'b0010,
-            WAIT2     =4'b0011,
-            WAIT3     =4'b0100,
-            READ_CHAR =4'b0101,
-            CHECK_CHAR=4'b0110,
-            INC_ADDR  =4'b0111,
-            INC_KEY   =4'b1000,
-            REINIT    =4'b1001,
-            DONE      =4'b1011;
-logic [4:0] state;
+parameter   INIT       =4'b0001,
+            WAIT1      =4'b0010,
+            WAIT2      =4'b0011,
+            WAIT3      =4'b0100,
+            READ_CHAR  =4'b0101,
+            CHECK_CHAR =4'b0110,
+            INC_ADDR   =4'b0111,
+            INC_KEY    =4'b1000,
+            REINIT     =4'b1001,
+            DONE       =4'b1011;
+
+logic [3:0] state;
+
+assign initialize = (state == REINIT);
 
 //Temp buffer to read the data
 logic [7:0] temp_store;
@@ -35,7 +38,6 @@ begin
         key <= 24'd0;
         found <= 1'b0;
         not_found <= 1'b0;
-        initialize <= 1'b0;
     end 
     else if (start) //once the decode is done, start doing stuff
     begin
@@ -45,7 +47,6 @@ begin
                 ram_addr <= 5'd0;
                 found <= 1'b0;
                 not_found <= 1'b0;
-                initialize <= 1'b0;
                 state <= WAIT1;
             end
             WAIT1: //3 wait states to make sure everything is good in the ram
@@ -93,12 +94,10 @@ begin
             end
             REINIT: 
             begin
-                initialize <= 1'b1;//Lets the for_loop know and reinitalizes the entire thing
                 state <= INIT;
             end
             DONE: 
             begin
-                initialize <= 1'b0;
                 state <= DONE; // Stay in this state unless reset
             end
             default: state <= INIT;

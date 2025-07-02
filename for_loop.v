@@ -12,47 +12,47 @@ module for_loop
   // Internal memory array
   logic [7:0] i = 8'd0;
   logic [2:0] state;
+
   // Output signals
   assign done = state[2];
+  assign wren = state[1];
   assign data = i;
   assign addr = i;
 
   // State encoding
-  parameter idle      = 3'b001;
-  parameter add       = 3'b010;
-  parameter finish    = 3'b100;
+  parameter IDLE      = 3'b001;
+  parameter ADD       = 3'b010;
+  parameter FINISH    = 3'b100;
 
   // State transition logic
   always_ff @(posedge clk or posedge rst_n) 
   begin
     if (rst_n)
       begin
-        state <= idle;
+        state <= IDLE;
         i <= 8'd0;
       end
     else 
       begin
         case (state)
-          idle:
+          IDLE:
             begin
               i <= 8'd0;
-              wren <= 1'b1;
               if (start)
-                state <= add;
+                state <= ADD;
               else
-                state <= idle;
+                state <= IDLE;
             end
-          add:
+          ADD:
             begin
               i <= i + 8'd1;
-              state <= (i == 8'd255 ? finish : add);
+              state <= (i == 8'd255 ? FINISH : ADD);
             end
-          finish:
+          FINISH:
           begin 
-            wren <= 1'b0;
             i <= 8'd0;
           end
-          default:state <= idle;
+          default:state <= IDLE;
         endcase
       end
   end
