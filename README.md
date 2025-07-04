@@ -45,6 +45,6 @@ This project implements the **RC4 stream cipher** on an **Intel DE1-SoC FPGA**, 
 ### Steps
 1. Clone this repository.
    
-2. Open the Quartus project file in /project and compile.
+2. Open the Quartus project file and compile.
 
-3. Load the .sof onto the DE1-SoC board using the Quartus Programmer.
+3. Load the .sof in /output_files onto the DE1-SoC board using the Quartus Programmer.
