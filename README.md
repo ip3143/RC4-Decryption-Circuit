@@ -1,6 +1,6 @@
 # RC4 Hardware Decryption System (FPGA)
 
-This project implements the **RC4 stream cipher** on an **Intel DE1-SoC FPGA**, using SystemVerilog. The system performs key scheduling, pseudo-random generation, and real-time decryption of an encrypted message stored in ROM. The design also includes a **brute-force key cracker** to recover the original key based on expected plaintext properties.
+This project implements the **RC4 stream cipher** on an **Intel DE1-SoC FPGA**, using SystemVerilog. The system performs key scheduling, pseudo-random generation, and real-time decryption of an encrypted message stored in ROM. The design also includes a **brute-force key cracker** to recover the original key based on expected plaintext properties. Credit to Lance Yao as the co-contributor on the original project.
 
 ---
 
